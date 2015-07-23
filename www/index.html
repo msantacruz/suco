@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <title>Suco App</title>  
+  
+  <link rel="stylesheet" href="lib/onsen/css/onsenui.css">  
+  <link rel="stylesheet" href="styles/app.css"/>
+  <link rel="stylesheet" href="styles/onsen-css-components-blue-basic-theme.css">  
+
+  <script src="lib/onsen/js/angular/angular.js"></script>    
+  <script src="lib/onsen/js/onsenui.js"></script>    
+  
+  <script src="cordova.js"></script>  
+  <script src="js/app.js"></script>  
+  <script>
+    ons.ready(function() {
+    });
+  </script>
+
+  <style>
+    .item {
+      padding: 10px;
+      line-height: 1;
+    }
+    .item-thum {
+      background-color: #ccc;
+      width: 50px;
+      height: 50px;
+      border-radius: 4px;
+    }
+    .item-title {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .item-desc {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.3;
+      margin: 4px 0 0 0;
+      padding: 0 30px 0 0;
+    }
+    .item-label {
+      font-size: 12px;
+      color: #999;
+      float: right;
+    }
+  </style>
+</head>
+
+<body ng-controller="AppController" ng-init="init()">    
+
+  <ons-navigator var="navi">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left"><ons-toolbar-button ng-click="showNew();"><ons-icon icon="ion-compose"></ons-icon></ons-toolbar-button></div>
+        <div class="center">Pets</div>
+      </ons-toolbar>
+
+      <ons-list ng-controller="MasterController">
+        <ons-list-item modifier="chevron" class="item" ng-repeat="item in items" ng-click="showDetail($index)">
+          <ons-row>
+            <ons-col width="110px" > 
+                <img src="{{item.petPicture}}" width="100px" height="100px" style="border-radius: 4px;-webkit-border-radius: 4px;border: inset 1px rgba(0, 0, 0, 0.3)"/>
+            </ons-col>
+            <ons-col>
+              <header>
+                <span class="item-title">{{item.petName}}</span>
+                <span class="item-label" ng-if="item.status==0">Admitted</span>
+                <span class="item-label" ng-if="item.status==1">Delivered</span>
+                <span class="item-label" ng-if="item.status==2">Euthanasia</span>
+                <span class="item-label" ng-if="item.status==3">Other</span>
+              </header>
+              <p class="item-desc">
+                <span ng-if="item.type==0">Dog</span>
+                <span ng-if="item.type=1">Cat</span>
+                ,
+                <span ng-if="item.sex==0">Male</span>
+                <span ng-if="item.sex==1">Female</span>
+                , {{item.comments}}
+              </p>
+            </ons-col>
+          </ons-row>                          
+        </ons-list-item>
+      </ons-list>
+    </ons-page>
+  </ons-navigator>
+
+  <ons-template id="detail.html">
+    <ons-page ng-controller="DetailController">
+
+      <ons-toolbar>
+        <div class="left"><ons-back-button>Back</ons-back-button></div>
+        <div class="center">{{item.petName}}</div>
+      </ons-toolbar>
+
+      <ons-list modifier="inset" style="margin-top: 10px">
+        <ons-list-item class="item">
+          <ons-row>
+            <ons-col width="110px"> 
+              <img src="{{item.petPicture}}" width="100px" height="100px"/>
+            </ons-col>
+            <ons-col>
+              <header>
+                <span class="item-title">{{item.petName}}</span>
+                <span class="item-label" ng-if="item.status==0">Admitted</span>
+                <span class="item-label" ng-if="item.status==1">Delivered</span>
+                <span class="item-label" ng-if="item.status==2">Euthanasia</span>
+                <span class="item-label" ng-if="item.status==3">Other</span>
+              </header>
+              <p class="item-desc">
+                <span ng-if="item.type==0">Dog</span>
+                <span ng-if="item.type=1">Cat</span>
+                ,
+                <span ng-if="item.sex==0">Male</span>
+                <span ng-if="item.sex==1">Female</span>
+                , {{item.comments}}
+              </p>
+            </ons-col>
+          </ons-row>
+        </ons-list-item>
+
+        <ons-list modifier="inset" style="margin-top: 10px">
+        <ons-list-item class="item">
+          <ons-row>
+            <ons-col width="110px"> 
+              <img src="{{item.ownerPicture}}" width="100px" height="100px"/>
+            </ons-col>
+            <ons-col>
+              <header>
+                <span class="item-title">{{item.ownerName}}</span>
+              </header>
+              <p class="item-desc">
+                {{item.address}}, {{item.phone}}
+              </p>
+            </ons-col>
+          </ons-row>
+        </ons-list-item>
+
+        <ons-list-item>
+          <label class="radio-button">
+            <input type="radio" ng-model="temp.status" value="1">
+            <div class="radio-button__checkmark"></div>
+            Deliver
+          </label>
+
+          <label class="radio-button">
+            <input type="radio" ng-model="temp.status" value="2">
+            <div class="radio-button__checkmark"></div>
+            Euthanasia
+          </label>
+
+          <label class="radio-button">
+            <input type="radio" ng-model="temp.status" value="3">
+            <div class="radio-button__checkmark"></div>
+            Other
+          </label>
+        </ons-list-item>
+
+        <ons-list-item>
+          <textarea class="textarea textarea--transparent" placeholder="Notes" ng-model="temp.notes" style="width: 100%; height: 100px;"></textarea>
+        </ons-list-item>
+      </ons-list>
+
+      <div style="padding: 10px 9px">
+        <ons-button modifier="large" style="margin: 0 auto;" ng-click="update();">
+          Save
+        </ons-button>
+      </div>
+
+    </ons-page>
+  </ons-template>
+
+  <ons-template id="new.html">
+    <ons-page ng-controller="NewController">
+
+      <ons-toolbar>
+        <div class="left"><ons-back-button>Back</ons-back-button></div>
+        <div class="center">New</div>
+      </ons-toolbar>
+      <form novalidate class="simple-form">
+        <ons-list modifier="inset" style="margin-top: 10px">
+          
+          <ons-list-item>
+            <table border="0">
+              <tr>
+                <td>
+                  <img border="0" ng-src="{{pet.petImage}}" width="100px" height="100px"/>
+                </td>
+                <td>
+                  <ons-button modifier="normal" style="margin: 0 auto;" ng-click="takePetPhoto();">
+                    Take pet picture
+                  </ons-button>
+                </td>
+              </tr>
+            </table>
+          </ons-list-item>
+
+          <ons-list-item>
+            <input type="text" class="text-input text-input--transparent" ng-model="pet.petName" placeholder="Pet name" style="width: 100%">
+          </ons-list-item>
+
+          <ons-list-item>
+            <label class="radio-button">
+              <input type="radio" ng-model="pet.sex" value="0">
+              <div class="radio-button__checkmark"></div>
+              Male
+            </label>
+
+            <label class="radio-button">
+              <input type="radio" ng-model="pet.sex" value="1">
+              <div class="radio-button__checkmark"></div>
+              Female
+            </label>
+          </ons-list-item>
+
+          <ons-list-item>
+            <label class="radio-button">
+              <input type="radio" ng-model="pet.type" value="0">
+              <div class="radio-button__checkmark"></div>
+              Dog
+            </label>
+
+            <label class="radio-button">
+              <input type="radio" ng-model="pet.type" value="1">
+              <div class="radio-button__checkmark"></div>
+              Cat
+            </label>
+          </ons-list-item>
+
+          <ons-list-item>
+            <table border="0">
+              <tr>
+                <td>
+                  <img ng-src="{{pet.ownerImage}}" width="100px" height="100px"/>
+                </td>
+                <td>
+                  <ons-button modifier="normal" style="margin: 0 auto;" ng-click="takeOwnerPhoto();">
+                    Take owner picture
+                  </ons-button>
+                </td>
+              </tr>
+            </table>
+          </ons-list-item>
+
+          <ons-list-item>
+            <input type="text" class="text-input text-input--transparent" ng-model="pet.ownerName" placeholder="Owner name" style="width: 100%">
+          </ons-list-item>
+
+          <ons-list-item>
+            <input type="tel" class="text-input text-input--transparent" ng-model="pet.phone" placeholder="Phone" style="width: 100%">
+          </ons-list-item> 
+
+          <ons-list-item>
+            <input type="text" class="text-input text-input--transparent" ng-model="pet.address" placeholder="Address" style="width: 100%">
+          </ons-list-item>
+
+          <ons-list-item>
+            <textarea class="textarea textarea--transparent" placeholder="Comments" ng-model="pet.comments" style="width: 100%; height: 100px;"></textarea>
+          </ons-list-item>
+
+        </ons-list>
+      </form>
+      <div style="padding: 10px 9px">
+        <ons-button modifier="large" style="margin: 0 auto;" ng-click="save();">
+          Save
+        </ons-button>
+      </div>
+
+    </ons-page>
+  </ons-template>
+
+</body>  
+</html>
